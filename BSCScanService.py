@@ -101,6 +101,6 @@ if __name__ == "__main__":
     main_wallet.bsc = bsc_service
     balance = bsc_service.get_account_balance(address=address)
     rounded_balance = round(balance, 5)
-    print(f"ballance: {rounded_balance}")
+    print(f"balance: {rounded_balance}")
     main_wallet.coin_status_check(sleep_minutes=1)
 
