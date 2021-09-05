@@ -18,8 +18,14 @@ void setup() {
 }
 
 void loop() {
+  lcd.display();
 //  blinkLCD(300);
-  autoScroll(displayText);
+//  autoScroll(displayText);
+
+  printSerialDisplay();
+
+  lcd.noDisplay();
+  delay(5000);
 }
 
 void autoScroll(String text) {
@@ -50,4 +56,15 @@ void blinkCursor(int delayTime) {
   delay(delayTime);
   lcd.cursor();
   delay(delayTime);
+}
+
+void printSerialDisplay() {
+  if (Serial.available()) {
+    delay(100);
+    lcd.clear();
+    while (Serial.available() > 0) {
+      lcd.write(Serial.read());
+    }
+    
+  }
 }
