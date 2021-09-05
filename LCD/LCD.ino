@@ -14,14 +14,16 @@ String displayText = "Follow @stoiczfpv on IG!";
 void setup() {
   lcd.begin(16, 2);
   Serial.begin(9600);
+//  lcd.print("earth is gray");
 }
 
 void loop() {
+//  blinkLCD(300);
   autoScroll(displayText);
 }
 
 void autoScroll(String text) {
-  lcd.setCursor(16,0);
+  lcd.setCursor(15,0);
   lcd.autoscroll();
   
   for (int i = 0; i < displayText.length(); i++) {
@@ -30,7 +32,22 @@ void autoScroll(String text) {
     lcd.print(c);
     delay(300);
   }
-  
+
 //  lcd.noAutoscroll();
 //  lcd.clear();
+}
+
+void blinkLCD(int delayTime) {
+  lcd.setCursor(0,0);
+  lcd.noBlink();
+  delay(delayTime);
+  lcd.blink();
+  delay(delayTime);
+}
+
+void blinkCursor(int delayTime) {
+  lcd.noCursor();
+  delay(delayTime);
+  lcd.cursor();
+  delay(delayTime);
 }
