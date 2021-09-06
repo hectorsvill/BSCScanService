@@ -18,22 +18,16 @@ void setup() {
 }
 
 void loop() {
-  lcd.display();
-//  blinkLCD(300);
-//  autoScroll(displayText);
 
-  printSerialDisplay();
-
-  lcd.noDisplay();
-  delay(5000);
+  autoScroll(displayText);
 }
 
 void autoScroll(String text) {
   lcd.setCursor(15,0);
   lcd.autoscroll();
   
-  for (int i = 0; i < displayText.length(); i++) {
-    char c = displayText[i];
+  for (int i = 0; i < text.length(); i++) {
+    char c = text[i];
     Serial.println(c);
     lcd.print(c);
     delay(300);
