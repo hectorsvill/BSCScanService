@@ -1,4 +1,5 @@
 #include <LiquidCrystal.h>
+#include <DHT.h>
 
 static const int rs = 7;
 static const int en = 8;
@@ -6,23 +7,56 @@ static const int d4 = 9;
 static const int d5 = 10;
 static const int d6 = 11;
 static const int d7 = 12;
-static const int DHT_SENSOR_PIN = 2;
+static const int dht11Pin = 2;
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-float tempeture;
+
+#define sensorType DHT11
+
+DHT HT(dht11Pin, sensorType);
+
 float humidity;
+float tempC;
+float tempF;
 
 bool deviceIsSet = false;
 void setup() {
-  lcd.begin(16, 2);
   Serial.begin(9600);
+  lcd.begin(16, 2);
+  HT.begin();
+  delay(1000);
+  deviceIsSet = true;
 }
 
 void loop() {
   if (deviceIsSet == false) {
     autoScroll("Setting up device.....");  
   } else {
+
+    humidity = HT.readHumidity();
+    tempC = HT.readTemperature();
+    tempF = HT.readTemperature(true);
+    String humidityStr = "H:" +  String(humidity) + "%";
+    String tempCStr = "C:" + String(tempC);
+    String tempFStr = "F:" + String(tempF);
+    String logStr = humidityStr + " " + tempCStr + " " + tempFStr + "\n";
+    Serial.print(logStr);
+
+    lcd.setCursor(0,0);
+    lcd.print("        ");
+    lcd.setCursor(random(0,8),0);
+    lcd.print(".");
     
+    lcd.setCursor(8,0);
+    lcd.print(humidityStr);
+    
+    lcd.setCursor(0,1);
+    lcd.print(tempCStr);
+    
+    lcd.setCursor(8,1);
+    lcd.print(tempFStr);
+    
+    delay(200);
   }
 }
 
@@ -35,7 +69,7 @@ void autoScroll(String text) {
     char c = text[i];
     Serial.println(c);
     lcd.print(c);
-    delay(300);
+    delay(200);
   }
 
   lcd.noAutoscroll();
