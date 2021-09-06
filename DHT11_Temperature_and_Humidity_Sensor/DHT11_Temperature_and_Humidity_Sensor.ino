@@ -24,13 +24,14 @@ void setup() {
   Serial.begin(9600);
   lcd.begin(16, 2);
   HT.begin();
-  delay(1000);
-  deviceIsSet = true;
+  
 }
 
 void loop() {
   if (deviceIsSet == false) {
-    autoScroll("Setting up device.....");  
+    autoScroll("Setting up device.....");
+    delay(1000);
+    deviceIsSet = true;
   } else {
 
     humidity = HT.readHumidity();
