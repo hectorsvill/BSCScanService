@@ -1,69 +1,73 @@
-/*
+/* Mini_Servo_robot_arm
+ * by: @hectorsvill
  * 
  * Components:
- *  - 5 x SG90 Servo
- *  - (not in use)PCA9685 16 Channel 12 Bit PWM Servo Motor Driver
- * 
+ *  - 4 x SG90 Servo
+ *  - 5v-9v power suply module
+ *  - arduino nano
  */
 
 #include <Servo.h>
-#include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
 
-
-#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
-#define SERVOMIN  110
-#define SERVOMAX  510
-#define SERVOCOUNT 5
-
-#define delayTime 200
-#define servoCount 5
-#define servo0Pin 9
-#define servo1Pin 10
-#define servo0MaxPositioon 175
-#define servo1MaxPosition 130
-#define servo2MaxPosition 140
-#define servo3MaxPosition 130
-#define servo4MaxPostion 130
-#define servo5MaxPosition 160
+#define delayTime 50
+#define servoCount 4
+#define servo0Pin 7
+#define servo1Pin 8
+#define servo2Pin 9
+#define servo3Pin 10
+#define servo0MaxPos 175
+#define servo1MaxPos 100
+#define servo2MaxPos 130
+#define servo3MaxPos 180
 
 Servo servo0;
 Servo servo1;
+Servo servo2;
+Servo servo3;
 
-//Adafruit_PWMServoDriver pwmServoDriver = Adafruit_PWMServoDriver();
+Servo servoList[] = {servo0, servo1, servo2, servo3};
+int serMaxPosList[] = {servo0MaxPos, servo1MaxPos, servo2MaxPos, servo3MaxPos};
 
 void setup() {
   Serial.begin(9600);
-  servo0.attach(9);
-  servo1.attach(10);
-//
-//  pwmServoDriver.begin();
-//  pwmServoDriver.setOscillatorFrequency(27000000);
-//  pwmServoDriver.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
-  delay(10);
+  servo0.attach(servo0Pin);
+  servo1.attach(servo1Pin);
+  servo2.attach(servo2Pin);
+  servo3.attach(servo3Pin);
+  delay(1000);
 }
 
 void loop() {
-  goToZero(servo1);
-  swingServo(servo1, servo1MaxPosition);
-  goToZero(servo1);
-  swingServo(servo0, servo1MaxPosition);
-//  pwmServoDriver.setPWM(0, 0, SERVOMIN + random(10, 30));
-//  delay(1000);
+  int ran = random(0, servoCount);
+  readServoPositions();
+  Serial.println(ran);
+  Servo servo = servoList[ran];
+  goToZero(servo);
+  swingServo(servo, random(15,serMaxPosList[ran]));
+}
 
+int *readServoPositions() {
+  int arr[4] = {};
+  
+  for (int i = 0; i < servoCount; i++) {
+    arr[i] = servoList[i].read();
+  }
+  
+  String str = "Servo 0:" + String(arr[0]) + " Servo 1:" + String(arr[1]) + " Servo 2:" + String(arr[2]) + " Servo 3:" + String(arr[3]);
+  Serial.println(str);
+  return arr;
 }
 
 void swingServo(Servo servo, int maxPosition) {
   for (int i = 0; i <  maxPosition; i+=5) {
     servo.write(i);
-    Serial.println(i);
+//    Serial.println(i);
     delay(delayTime);
   }
 
   for (int i = maxPosition; i >= 0; i-=5) {
     servo.write(i);
-    Serial.println(i);
-    Serial.println(i);
+//    Serial.println(i);
     delay(delayTime);
   }  
 }
@@ -80,18 +84,14 @@ void goToZero(Servo servo) {
     int pinPosition = servo.read();
     pinPosition -= 5;
     servo.write(pinPosition);
+    
     String str = "goToZero at position: " + String(pinPosition);
-    Serial.println(str);
-    delay(delayTime);
+//    Serial.println(str);
+    
     if (pinPosition < 0) {
       pinPosition = 0;
     }
+    
+    delay(delayTime);
   }
-}
-
-int angleToPulse(int angle) {
-  int pulse = map(angle, 0, 180,SERVOMIN, SERVOMAX);
-  String infoStr = "angle" + String(angle) + "pulse" + String(pulse);
-  Serial.println(infoStr);
-  return pulse; 
 }
