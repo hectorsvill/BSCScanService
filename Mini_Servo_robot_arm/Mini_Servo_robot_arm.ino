@@ -2,7 +2,7 @@
  * 
  * Components:
  *  - 5 x SG90 Servo
- *  - PCA9685 16 Channel 12 Bit PWM Servo Motor Driver
+ *  - (not in use)PCA9685 16 Channel 12 Bit PWM Servo Motor Driver
  * 
  */
 
@@ -15,23 +15,27 @@
 #define SERVOMIN  110
 #define SERVOMAX  510
 #define SERVOCOUNT 5
+
+#define delayTime 200
+#define servoCount 5
+#define servo0Pin 9
+#define servo1Pin 10
+#define servo0MaxPositioon 175
+#define servo1MaxPosition 130
+#define servo2MaxPosition 140
+#define servo3MaxPosition 130
+#define servo4MaxPostion 130
+#define servo5MaxPosition 160
+
+Servo servo0;
 Servo servo1;
-Adafruit_PWMServoDriver pwmServoDriver = Adafruit_PWMServoDriver();
 
-int delayTime = 500;
-int servoPin = 9;
-int servoPosition=0;
-int servoMaxPosition = 180;
-int servo1MaxPosition = 170;
-int servo2MaxPosition = 140;
-int servo3MaxPosition = 130;
-
-// our servo # counter
-uint8_t servonum = 0;
+//Adafruit_PWMServoDriver pwmServoDriver = Adafruit_PWMServoDriver();
 
 void setup() {
   Serial.begin(9600);
-  servo1.attach(servoPin);
+  servo0.attach(9);
+  servo1.attach(10);
 //
 //  pwmServoDriver.begin();
 //  pwmServoDriver.setOscillatorFrequency(27000000);
@@ -41,28 +45,27 @@ void setup() {
 
 void loop() {
   goToZero(servo1);
-  servo1.write(servoMaxPosition);
-  delay(delayTime);
-  
-//  Serial.println(servonum);
+  swingServo(servo1, servo1MaxPosition);
+  goToZero(servo1);
+  swingServo(servo0, servo1MaxPosition);
 //  pwmServoDriver.setPWM(0, 0, SERVOMIN + random(10, 30));
 //  delay(1000);
 
-//  int maxPosition = servoMaxPosition;
-//  
-//  for (int i = 0; i <  maxPosition; i+=1) {
-////    servo1.write(i);
-//    pwmServoDriver.setPWM(0, 0, angleToPulse(i));
-//    Serial.println(i);
-//    delay(delayTime);
-//  }
-//
-//  for (int i = maxPosition; i >= 0; i-=1) {
-////    servo1.write(i);
-//    pwmServoDriver.setPWM(0, 0, angleToPulse(i));
-//    Serial.println(i);
-//    delay(delayTime);
-//  }
+}
+
+void swingServo(Servo servo, int maxPosition) {
+  for (int i = 0; i <  maxPosition; i+=5) {
+    servo.write(i);
+    Serial.println(i);
+    delay(delayTime);
+  }
+
+  for (int i = maxPosition; i >= 0; i-=5) {
+    servo.write(i);
+    Serial.println(i);
+    Serial.println(i);
+    delay(delayTime);
+  }  
 }
 
 void randomPosition() {
@@ -71,25 +74,15 @@ void randomPosition() {
   servo1.write(num);  
   delay(250);
 }
-void checkServoRadius() {
-  servo1.write(0);
-  if (servo1.read()  < servoMaxPosition) {
-    servo1.write(servoPosition);
-    servoPosition += 10;
-    delay(delayTime);
-  } 
-}
 
-void goToZero(Servo servo) {
-  
-  
+void goToZero(Servo servo) { 
   while (servo.read() > 0) {
     int pinPosition = servo.read();
     pinPosition -= 5;
     servo.write(pinPosition);
     String str = "goToZero at position: " + String(pinPosition);
     Serial.println(str);
-    delay(100);
+    delay(delayTime);
     if (pinPosition < 0) {
       pinPosition = 0;
     }
