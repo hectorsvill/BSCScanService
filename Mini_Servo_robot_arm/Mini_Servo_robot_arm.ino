@@ -71,7 +71,7 @@ void loop() {
         
         int value = valueStr.toInt();
         servoList[servoNumber].write(value);
-        String message = "servo 0 to angle" + String(value);
+        String message = "servo " + String(servoNumber) + " to angle" + String(value);
         Serial.println(message);
       }else if (str[0] == 'p' && str[1] == 'a') {
         // pa - print angle
