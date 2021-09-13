@@ -36,14 +36,53 @@ void setup() {
   servo3.attach(servo3Pin);
   delay(1000);
 }
-
+int state = 2;
+int count = 0;
 void loop() {
-  int ran = random(0, servoCount);
-  readServoPositions();
-  Serial.println(ran);
-  Servo servo = servoList[ran];
-  goToZero(servo);
-  swingServo(servo, random(15,serMaxPosList[ran]));
+//  servo0.write(random(10, 50));
+//  servo1.write(random(10, 30));
+//  servo2.write(random(10, 20));
+//  servo3.write(random(10, 100));
+//  
+  if (state == 0){
+    int ran = random(0, servoCount);
+    Serial.println(ran);
+    Servo servo = servoList[ran];
+    goToZero(servo);
+    swingServo(servo, random(15,serMaxPosList[ran])); 
+  } else if (state == 1) {
+    
+    for (int i = 0; i < servoCount; i++) {
+      goToZero(servoList[i]);
+    }
+    
+  } else if (state == 2) {
+    if (Serial.available()) {
+      //ex: s0 120 - move servo to angle
+      String str = Serial.readString();
+//      Serial.println(str);
+
+      int servoNumber = String(str[1]).toInt();
+      if ((str[0] == 's') && (servoNumber < servoCount)) {
+        String valueStr = "";
+        for (int i = 3; i < str.length(); i++) {
+          valueStr += str[i];
+        }
+        
+        int value = valueStr.toInt();
+        servoList[servoNumber].write(value);
+        String message = "servo 0 to angle" + String(value);
+        Serial.println(message);
+      }else if (str[0] == 'p' && str[1] == 'a') {
+        // pa - print angle
+        for (int i = 0; i < servoCount; i++) {
+          int pos = servoList[i].read();
+          String message = "servo " + String(i) + " position: " + pos;
+          Serial.println(message);
+        }
+      }
+    }
+  }
 }
 
 int *readServoPositions() {
@@ -53,7 +92,7 @@ int *readServoPositions() {
     arr[i] = servoList[i].read();
   }
   
-  String str = "Servo 0:" + String(arr[0]) + " Servo 1:" + String(arr[1]) + " Servo 2:" + String(arr[2]) + " Servo 3:" + String(arr[3]);
+  String str = "servo0: " + String(arr[0]) + " servo1: " + String(arr[1]) + " servo2: " + String(arr[2]) + " servo3:" + String(arr[3]);
   Serial.println(str);
   return arr;
 }
@@ -87,7 +126,7 @@ void goToZero(Servo servo) {
     
     String str = "goToZero at position: " + String(pinPosition);
 //    Serial.println(str);
-    
+
     if (pinPosition < 0) {
       pinPosition = 0;
     }
