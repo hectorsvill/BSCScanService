@@ -75,17 +75,18 @@ void loop() {
         Serial.println(message);
       }else if (str[0] == 'p' && str[1] == 'a') {
         // pa - print angle
-        for (int i = 0; i < servoCount; i++) {
-          int pos = servoList[i].read();
-          String message = "servo " + String(i) + " position: " + pos;
-          Serial.println(message);
-        }
+        readServoAngles();
+//        for (int i = 0; i < servoCount; i++) {
+//          int pos = servoList[i].read();
+//          String message = "servo " + String(i) + " position: " + pos;
+//          Serial.println(message);
+//        }
       }
     }
   }
 }
 
-int *readServoPositions() {
+int *readServoAngles() {
   int arr[4] = {};
   
   for (int i = 0; i < servoCount; i++) {
