@@ -39,11 +39,6 @@ void setup() {
 int state = 2;
 int count = 0;
 void loop() {
-//  servo0.write(random(10, 50));
-//  servo1.write(random(10, 30));
-//  servo2.write(random(10, 20));
-//  servo3.write(random(10, 100));
-//  
   if (state == 0){
     int ran = random(0, servoCount);
     Serial.println(ran);
@@ -57,7 +52,13 @@ void loop() {
     }
     
   } else if (state == 2) {
-    if (Serial.available()) {
+    state2();
+  }
+}
+
+// command line state
+void state2() {
+      if (Serial.available()) {
       //ex: s0 120 - move servo to angle
       String str = Serial.readString();
 //      Serial.println(str);
@@ -68,7 +69,7 @@ void loop() {
         for (int i = 3; i < str.length(); i++) {
           valueStr += str[i];
         }
-        
+
         int value = valueStr.toInt();
         servoList[servoNumber].write(value);
         String message = "servo " + String(servoNumber) + " to angle" + String(value);
@@ -76,14 +77,8 @@ void loop() {
       }else if (str[0] == 'p' && str[1] == 'a') {
         // pa - print angle
         readServoAngles();
-//        for (int i = 0; i < servoCount; i++) {
-//          int pos = servoList[i].read();
-//          String message = "servo " + String(i) + " position: " + pos;
-//          Serial.println(message);
-//        }
       }
     }
-  }
 }
 
 int *readServoAngles() {
@@ -93,7 +88,7 @@ int *readServoAngles() {
     arr[i] = servoList[i].read();
   }
   
-  String str = "servo0: " + String(arr[0]) + " servo1: " + String(arr[1]) + " servo2: " + String(arr[2]) + " servo3:" + String(arr[3]);
+  String str = "servo 0: " + String(arr[0]) + "\nservo 1: " + String(arr[1]) + "\nservo 2: " + String(arr[2]) + "\nservo 3: " + String(arr[3]);
   Serial.println(str);
   return arr;
 }
