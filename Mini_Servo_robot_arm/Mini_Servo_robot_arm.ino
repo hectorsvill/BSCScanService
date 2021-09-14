@@ -68,13 +68,25 @@ void commandLineState() {
       int servoNumber = String(str[1]).toInt();
       if ((str[0] == 's') && (servoNumber < servoCount)) {
         //ex: s0 120 - move servo number 0 to angle 120
+        int intStart = str[3] == '+' || str[3] == '-' ? 4 : 3;
+        
         String valueStr = "";
-        for (int i = 3; i < str.length(); i++) {
+        for (int i = intStart; i < str.length(); i++) {
           valueStr += str[i];
         }
-
+        
         int value = valueStr.toInt();
-        servoList[servoNumber].write(value);
+        int angle = servoList[servoNumber].read();
+        
+        if (str[3] == '+') {
+          value = angle + value;
+          servoList[servoNumber].write(value);
+        } else if(str[3] == '-') {
+          value = angle - value;
+          servoList[servoNumber].write(value);
+        } else {
+          servoList[servoNumber].write(value);  
+        }
         
         String message = "servo " + String(servoNumber) + " to angle " + String(value);
         Serial.println(message);
